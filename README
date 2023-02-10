@@ -1,3 +1,21 @@
+Support socks5 proxy
+---------------------
+protocol : SOCKS5 , not support SOCKS5A
+
+port: socks5port
+
+Example command: 
+
+```sh
+# Open a local Socks5 listener on port 30022 
+# Forward traffic to www.github.com:80 
+# through another local socks5 proxy localhost:1080.
+socat TCP-LISTEN:30022,reuseaddr,fork SOCKS5:localhost:www.github.com:80,socks5port=1080
+# Test
+curl -v http://localhost:30022
+```
+
+
 
 about
 -----
