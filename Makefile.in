@@ -102,7 +102,7 @@ docclean:
 	rm -f doc/socat.1 doc/socat.html
 
 doc/socat.1: doc/socat.yo
-	-mkdir -p $(@D); yodl2man -o $@ $+
+	-mkdir -p $(@D)
 
 doc/socat.html: doc/socat.yo
 # care for refs in html
@@ -134,13 +134,11 @@ doc: doc/xio.help
 strip: progs
 	strip $(PROGS)
 
-install: progs $(srcdir)/doc/socat.1
+install: progs
 	mkdir -p $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 socat $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 procan $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 filan $(DESTDIR)$(BINDEST)
-	mkdir -p $(DESTDIR)$(MANDEST)/man1
-	$(INSTALL) -m 644 $(srcdir)/doc/socat.1 $(DESTDIR)$(MANDEST)/man1/
 
 uninstall:
 	rm -f $(DESTDIR)$(BINDEST)/socat
