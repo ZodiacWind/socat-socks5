@@ -19,16 +19,16 @@ datarootdir = ${prefix}/share
 MANDEST = ${datarootdir}/man
 
 srcdir = .
-
+VPATH = .
 
 CC = gcc
-CCOPTS = $(CCOPT) -Wall -Wno-parentheses
+CCOPTS = $(CCOPT)
 
 SYSDEFS = 
 CPPFLAGS = -I. 
 #0 INCLS = -I. @V_INCL@
 DEFS = -DHAVE_CONFIG_H
-LIBS = -lwrap -lutil  -lreadline  -lssl -lcrypto
+LIBS = -lutil -lbsd  -lreadline  -lssl -lcrypto
 LDFLAGS = 
 
 INSTALL = /usr/bin/install -c
@@ -36,8 +36,8 @@ INSTALL = /usr/bin/install -c
 #OBJ = $(CSRC:.c=.o) $(GENSRC:.c=.o) 
 
 
-#0 CFLAGS = -O -D_GNU_SOURCE $(CCOPTS) $(DEFS) $(INCLS)
-CFLAGS = -O -D_GNU_SOURCE $(CCOPTS) $(DEFS) $(CPPFLAGS)
+#0 CFLAGS = -O -D_GNU_SOURCE -Wall -Wno-parentheses $(CCOPTS) $(DEFS) $(INCLS)
+CFLAGS = -O -D_GNU_SOURCE -Wall -Wno-parentheses $(CCOPTS) $(DEFS) $(CPPFLAGS)
 CLIBS = $(LIBS)
 #CLIBS = $(LIBS) -lm -lefence
 XIOSRCS = xioinitialize.c xiohelp.c xioparam.c xiodiag.c xioopen.c xioopts.c \
@@ -45,43 +45,48 @@ XIOSRCS = xioinitialize.c xiohelp.c xioparam.c xiodiag.c xioopen.c xioopts.c \
 	xiolayer.c xioshutdown.c xioclose.c xioexit.c \
 	xio-process.c xio-fd.c xio-fdnum.c xio-stdio.c xio-pipe.c \
 	xio-gopen.c xio-creat.c xio-file.c xio-named.c \
-	xio-socket.c xio-interface.c xio-listen.c xio-unix.c \
+	xio-socket.c xio-interface.c xio-listen.c xio-unix.c xio-vsock.c \
 	xio-ip.c xio-ip4.c xio-ip6.c xio-ipapp.c xio-tcp.c \
 	xio-sctp.c xio-rawip.c \
 	xio-socks.c xio-proxy.c xio-udp.c \
-	xio-rawip.c \
+	xio-socks5.c \
 	xio-progcall.c xio-exec.c xio-system.c xio-termios.c xio-readline.c \
 	xio-pty.c xio-openssl.c xio-streams.c\
-	xio-ascii.c xiolockfile.c xio-tcpwrap.c xio-ext2.c xio-tun.c
+	xio-ascii.c xiolockfile.c xio-tcpwrap.c xio-fs.c xio-tun.c
 XIOOBJS = $(XIOSRCS:.c=.o)
-UTLSRCS = error.c dalan.c procan.c procan-cdefs.c hostan.c fdname.c sysutils.c utils.c nestlex.c filan.c sycls.c sslcls.c
+UTLSRCS = error.c dalan.c procan.c procan-cdefs.c hostan.c fdname.c sysutils.c utils.c nestlex.c vsnprintf_r.c snprinterr.c filan.c sycls.c sslcls.c
 UTLOBJS = $(UTLSRCS:.c=.o)
 CFILES = $(XIOSRCS) $(UTLSRCS) socat.c procan_main.c filan_main.c
 OFILES = $(CFILES:.c=.o)
 PROGS = socat procan filan
 
-HFILES = sycls.h sslcls.h error.h dalan.h procan.h filan.h hostan.h sysincludes.h xio.h xioopen.h sysutils.h utils.h nestlex.h compat.h \
+HFILES = sycls.h sslcls.h error.h dalan.h procan.h filan.h hostan.h sysincludes.h xio.h xioopen.h sysutils.h utils.h nestlex.h vsnprintf_r.h snprinterr.h compat.h \
 	xioconfig.h mytypes.h xioopts.h xiodiag.h xiohelp.h xiosysincludes.h \
 	xiomodes.h xiolayer.h xio-process.h xio-fd.h xio-fdnum.h xio-stdio.h \
 	xio-named.h xio-file.h xio-creat.h xio-gopen.h xio-pipe.h \
-	xio-socket.h xio-interface.h xio-listen.h xio-unix.h \
+	xio-socket.h xio-interface.h xio-listen.h xio-unix.h xio-vsock.h \
 	xio-ip.h xio-ip4.h xio-ip6.h xio-rawip.h \
 	xio-ipapp.h xio-tcp.h xio-udp.h xio-sctp.h \
 	xio-socks.h xio-proxy.h xio-progcall.h xio-exec.h \
 	xio-system.h xio-termios.h xio-readline.h \
 	xio-pty.h xio-openssl.h xio-streams.h \
-	xio-ascii.h xiolockfile.h xio-tcpwrap.h xio-ext2.h xio-tun.h
+	xio-ascii.h xiolockfile.h xio-tcpwrap.h xio-fs.h xio-tun.h
 
 
 DOCFILES = README README.FIPS CHANGES FILES EXAMPLES PORTING SECURITY DEVELOPMENT doc/socat.yo doc/socat.1 doc/socat.html doc/xio.help FAQ BUGREPORTS COPYING COPYING.OpenSSL doc/dest-unreach.css doc/socat-openssltunnel.html doc/socat-multicast.html doc/socat-tun.html doc/socat-genericsocket.html
-SHFILES = daemon.sh mail.sh ftp.sh readline.sh
+SHFILES = daemon.sh mail.sh ftp.sh readline.sh \
+	socat_buildscript_for_android.sh
 TESTFILES = test.sh socks4echo.sh proxyecho.sh gatherinfo.sh readline-test.sh \
-	proxy.sh socks4a-echo.sh testcert.conf
+	proxy.sh socks4a-echo.sh
 OSFILES = Config/Makefile.Linux-2-6-24 Config/config.Linux-2-6-24.h \
 	Config/Makefile.SunOS-5-10 Config/config.SunOS-5-10.h \
 	Config/Makefile.FreeBSD-6-1 Config/config.FreeBSD-6-1.h \
-	Config/Makefile.NetBSD-4-0 Config/config.NetBSD-4-0.h \
-	Config/Makefile.OpenBSD-4-3 Config/config.OpenBSD-4-3.h
+	Config/Makefile.NetBSD-5-1  Config/config.NetBSD-5-1.h \
+	Config/Makefile.OpenBSD-4-3 Config/config.OpenBSD-4-3.h \
+	Config/Makefile.AIX-5-3 Config/config.AIX-5-3.h \
+	Config/Makefile.Cygwin-1-5-25 Config/config.Cygwin-1-5-25.h \
+	Config/Makefile.MacOSX-10-5 Config/config.MacOSX-10-5.h \
+	Config/Makefile.DragonFly-2-8-2 Config/config.DragonFly-2-8-2.h
 
 all: progs doc
 
@@ -96,10 +101,11 @@ docclean:
 	rm -f doc/socat.1 doc/socat.html
 
 doc/socat.1: doc/socat.yo
-	yodl2man -o $@ $+
+	-mkdir -p $(@D)
 
 doc/socat.html: doc/socat.yo
-	cd doc; yodl2html -o socat.html socat.yo; cd ..
+# care for refs in html
+	-mkdir -p $(@D); cd $(@D);
 
 progs: $(PROGS)
 
@@ -109,12 +115,13 @@ depend: $(CFILES) $(HFILES)
 socat: socat.o libxio.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ socat.o libxio.a $(CLIBS)
 
-PROCAN_OBJS=procan_main.o procan.o procan-cdefs.o hostan.o error.o sycls.o sysutils.o utils.o
+PROCAN_OBJS=procan_main.o procan.o procan-cdefs.o hostan.o error.o sycls.o sysutils.o utils.o vsnprintf_r.o snprinterr.o
 procan: $(PROCAN_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(PROCAN_OBJS) $(CLIBS)
 
-filan: filan_main.o filan.o fdname.o error.o sycls.o sysutils.o utils.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ filan_main.o filan.o fdname.o error.o sycls.o sysutils.o utils.o $(CLIBS)
+FILAN_OBJS=filan_main.o filan.o fdname.o error.o sycls.o sysutils.o utils.o vsnprintf_r.o snprinterr.o
+filan: $(FILAN_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(FILAN_OBJS) $(CLIBS)
 
 libxio.a: $(XIOOBJS) $(UTLOBJS)
 	$(AR) r $@ $(XIOOBJS) $(UTLOBJS)
@@ -126,13 +133,11 @@ doc: doc/xio.help
 strip: progs
 	strip $(PROGS)
 
-install: progs $(srcdir)/doc/socat.1
+install: progs
 	mkdir -p $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 socat $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 procan $(DESTDIR)$(BINDEST)
 	$(INSTALL) -m 755 filan $(DESTDIR)$(BINDEST)
-	mkdir -p $(DESTDIR)$(MANDEST)/man1
-	$(INSTALL) -m 644 $(srcdir)/doc/socat.1 $(DESTDIR)$(MANDEST)/man1/
 
 uninstall:
 	rm -f $(DESTDIR)$(BINDEST)/socat
@@ -151,7 +156,8 @@ socat.tar.bz2: socat.tar
 
 VERSION = `sed 's/"//g' VERSION`
 TARDIR = socat-$(VERSION)
-socat.tar: configure.in configure Makefile.in config.h.in install-sh VERSION $(CFILES) $(HFILES) $(DOCFILES) $(SHFILES) $(OSFILES) $(TESTFILES) socat.spec
+socat.tar: configure.in configure Makefile.in config.h.in install-sh VERSION $(CFILES) $(HFILES) $(DOCFILES) $(SHFILES) $(OSFILES) $(TESTFILES) socat.spec \
+	configure.ac
 	if [ ! -d $(TARDIR) ]; then mkdir $(TARDIR); fi
 	tar cf - $+ |(cd $(TARDIR); tar xf -)
 	tar cvf socat.tar $(TARDIR)
